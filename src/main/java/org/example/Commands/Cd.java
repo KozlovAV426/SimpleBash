@@ -4,7 +4,6 @@ import org.example.Commands.Description.Description;
 import org.example.State.State;
 
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,6 +37,7 @@ public class Cd extends Command {
 
         if (Files.notExists(state.getCurrentDir())) {
             System.out.println("Incorrect path");
+            state.setLastCommandFailed(true);
             state.setCurrentDir(oldPath);
         }
     }

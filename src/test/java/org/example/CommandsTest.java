@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
 public class CommandsTest {
     public State state;
     public static int iter = 0;
+
 
     @Before
     public void init() {
@@ -32,6 +34,15 @@ public class CommandsTest {
                 writer.newLine();
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void createDir(String dirName) {
+        try {
+            Files.createDirectory(state.getCurrentDir().resolve(dirName));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -133,6 +144,49 @@ public class CommandsTest {
         } catch (Exception e) {
             fail();
         }
+    }
 
+    @Test
+    public void lsTest() {
+        String parent = "parent";
+        String childA = "A";
+        String childB = "B";
+
+        createDir(parent);
+        state.setCurrentDir(state.getCurrentDir().resolve(parent));
+
+        iter = 0;
+        state.setCurrentOut((line) -> {
+            ++iter;
+        });
+
+        Ls ls = new Ls(state);
+        ls.execute(null);
+
+        assertEquals(0, iter);
+
+        createDir(childA);
+        createDir(childB);
+
+        System.out.println(state.getCurrentDir().resolve(childA).toString());
+        state.setCurrentOut((line) -> {
+            String[] splittedLine = line.split(" ");
+            if (!splittedLine[0].equals(state.getCurrentDir().resolve(childA).toString()) &&
+                    !splittedLine[0].equals(state.getCurrentDir().resolve(childB).toString())) {
+                fail();
+            }
+            ++iter;
+        });
+
+        ls.execute(null);
+        assertEquals(2, iter);
+
+        deleteFile(childA);
+        deleteFile(childB);
+
+        state.setCurrentDir(state.getCurrentDir().getParent());
+        deleteFile(parent);
     }
 }
+
+

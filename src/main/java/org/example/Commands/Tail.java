@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Description(name = "tail", param = "[number of lines to print]",
+@Description(name = "tail", param = "<filename> [-n <number of lines to print>]",
         description = "prints last N lines of file")
 public class Tail extends Command {
 

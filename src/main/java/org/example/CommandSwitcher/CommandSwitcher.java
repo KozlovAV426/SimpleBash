@@ -15,6 +15,8 @@ public class CommandSwitcher {
     private final HashMap<String, Command> commands;
 
     public void processCommand(String command, String[] argv, String fileName) {
+        state.setLastCommandFailed(false);
+
         if (null != fileName) {
             Path path = Paths.get(fileName);
             if (!path.isAbsolute()) {
@@ -41,6 +43,7 @@ public class CommandSwitcher {
                 commands.get(command).execute(argv);
             } catch (NullPointerException e) {
                 System.out.println("No such command");
+                state.setLastCommandFailed(true);
             }
         }
 
